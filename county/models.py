@@ -11,14 +11,14 @@ from django.db import models
 class User(AbstractUser):
     pass
 
-# List of Counties for each user 
+# List of Counties for each user
 class CountyListEntry(models.Model):
     """The following stores data on the list of counties for each user.
-    
+
     This class is important for the "My List" functionality of the app.
     """
     user=models.ForeignKey('User',
                            on_delete=models.CASCADE,
                            related_name='usernames')
-    county_name=models.CharField(max_length=255)
+    countyname=models.CharField(max_length=255)
     content = models.CharField(max_length=255)

@@ -16,7 +16,7 @@ function checkTime(i) {
   return i;
 }
 
-function countyfunction(County_Name) {
+function county_function(County_Name) {
   if (County_Name === 'Berkshire') {
   document.getElementById('exampleModalLongTitle').innerHTML= County_Name + " County"
   document.getElementById('FIPS_code').innerHTML= "003";

@@ -21,7 +21,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from markdown2 import Markdown
 from . import util
-from .models import CountyListEntry, User 
+from .models import CountyListEntry, User
 
 #Index/Main Page
 def index(request):
@@ -29,33 +29,33 @@ def index(request):
     return render(request, "county/index.html")
 
 #County Information
-def county_information(request, county_name):
+def county_information(request, countyname):
     """
     Contains code for when more information
     about the county is requested.
     """
     markdowner = Markdown()
     counties_list = util.list_entries()
-    if county_name in counties_list:
-        county_page_data = util.get_entry(county_name)
+    if countyname in counties_list:
+        county_page_data = util.get_entry(countyname)
         county= markdowner.convert(county_page_data)
         user=request.user
         if request.user.is_anonymous is False:
             user_list=CountyListEntry.objects.filter(user=user)
             posts=[]
             for post in user_list:
-                posts.append(post.county_name)
-            if county_name in posts:
+                posts.append(post.countyname)
+            if countyname in posts:
                 saved_already=True
                 return render(request, "county/countyinformation.html", {"county": county,
-                                                                         "county_name": county_name,
+                                                                         "countyname": countyname,
                                                                          "saved_already":saved_already
                                                                         }
                              )
         saved_already=False
         return render(request, "county/countyinformation.html",
                       {"county": county,
-                       "county_name": county_name,
+                       "countyname": countyname,
                        "saved_already":saved_already
                       }
                      )
@@ -74,7 +74,7 @@ def your_list(request):
         user_list=CountyListEntry.objects.filter(user=user)
         posts=[]
         for post in user_list:
-            posts.append(post.county_name)
+            posts.append(post.countyname)
         pagination = Paginator(posts, 5)
         page_no = request.GET.get('page')
         posts = pagination.get_page(page_no)
@@ -84,7 +84,7 @@ def your_list(request):
     })
 
 #Save
-def save_county(request,county_name):
+def save_county(request,countyname):
     """
     Contains code to save a county to a personal
     list (My List).
@@ -97,41 +97,41 @@ def save_county(request,county_name):
                      )
     else:
         user=request.user
-        content=util.get_entry(county_name)
+        content=util.get_entry(countyname)
         county_list_entry=CountyListEntry.objects.create(user=user,
-                                                         county_name=county_name,
+                                                         countyname=countyname,
                                                          content=content
                                                         )
         county_list_entry.save()
         saved_already=bool('Saved')
         return render(request, "county/countyinformation.html", {"county": markdowner.convert(content),
-                                                                 'county_name': county_name,
+                                                                 'countyname': countyname,
                                                                  "message":"County Saved!",
                                                                  "saved_already":saved_already
                                                                 }
                      )
     return render(request, "county/countyinformation.html", {"county": markdowner.convert(content),
-                                                             'county_name': county_name,
+                                                             'countyname': countyname,
                                                              "saved_already":saved_already
                                                             }
                  )
 
 #Unsave
-def unsave_county(request,county_name):
+def unsave_county(request,countyname):
     """
     Contains code to save a county to a personal
     list (My List).
     """
     user=request.user
     markdowner = Markdown()
-    county_page_data = util.get_entry(county_name)
-    county_name_entry = CountyListEntry.objects.filter(user=user,
-                                                       county_name=county_name
+    county_page_data = util.get_entry(countyname)
+    countyname_entry = CountyListEntry.objects.filter(user=user,
+                                                       countyname=countyname
                                                       )
-    county_name_entry.delete()
+    countyname_entry.delete()
     saved_already=bool(False)
     return render(request, "county/countyinformation.html", {"county": markdowner.convert(county_page_data),
-                                                             'county_name': county_name,
+                                                             'countyname': countyname,
                                                              "message":"County Unsaved!",
                                                              "saved_already":saved_already})
 #Login
@@ -156,7 +156,7 @@ def login_view(request):
         else:
             return render(request, "county/index.html")
 
-#Logout        
+#Logout
 def logout_view(request):
     """Contains code to logout a user."""
     logout(request)

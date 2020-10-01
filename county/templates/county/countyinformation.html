@@ -1,6 +1,6 @@
 {% extends "county/layout.html" %}
 {% block title %}
-    {{ county_name }}
+    {{ countyname }}
 {% endblock %}
 
 {% block body %}
@@ -17,10 +17,10 @@
 <div class="w3-container w3-animate-opacity">
 
 {% if saved_already %}
-<a id="unsave_button" href="{% url 'unsave_county' county_name %}" class="md-3 btn btn-primary float-right"><b>Unsave from My List</b></a>
+<a id="unsave_button" href="{% url 'unsave_county' countyname %}" class="md-3 btn btn-primary float-right"><b>Unsave from My List</b></a>
 
 {% else %}
-<a id="save_button" href="{% url 'save_county' county_name %}" class="md-3 btn btn-primary float-right"><b>Save to My List</b></a>
+<a id="save_button" href="{% url 'save_county' countyname %}" class="md-3 btn btn-primary float-right"><b>Save to My List</b></a>
 
 {% endif %}
 </div>
@@ -30,33 +30,33 @@
 </div>
 </div>
 <div class="w3-container w3-center w3-animate-right">
-{% if 'Essex' in county_name%}
+{% if 'Essex' in countyname%}
 <img src = "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Map_of_Massachusetts_highlighting_Essex_County.svg/1024px-Map_of_Massachusetts_highlighting_Essex_County.svg.png" class="rounded mx-auto d-block" width="50%">
-{% elif 'Worcester' in county_name%}
+{% elif 'Worcester' in countyname%}
 <img src = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Map_of_Massachusetts_highlighting_Worcester_County.svg/1024px-Map_of_Massachusetts_highlighting_Worcester_County.svg.png" class="rounded mx-auto d-block" width="50%">
-{% elif 'Berkshire' in county_name%}
+{% elif 'Berkshire' in countyname%}
 <img src = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Map_of_Massachusetts_highlighting_Berkshire_County.svg/1024px-Map_of_Massachusetts_highlighting_Berkshire_County.svg.png" class="rounded mx-auto d-block" width="50%">
-{% elif 'Franklin' in county_name%}
+{% elif 'Franklin' in countyname%}
 <img src = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Map_of_Massachusetts_highlighting_Franklin_County.svg/1024px-Map_of_Massachusetts_highlighting_Franklin_County.svg.png" class="rounded mx-auto d-block" width="50%">
-{% elif 'Hampshire' in county_name%}
+{% elif 'Hampshire' in countyname%}
 <img src = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Map_of_Massachusetts_highlighting_Hampshire_County.svg/1024px-Map_of_Massachusetts_highlighting_Hampshire_County.svg.png" class="rounded mx-auto d-block" class="img-fluid animated fadeInUp" width="50%" >
-{% elif 'Hampden' in county_name%}
+{% elif 'Hampden' in countyname%}
 <img src = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Map_of_Massachusetts_highlighting_Hampden_County.svg/1024px-Map_of_Massachusetts_highlighting_Hampden_County.svg.png" class="rounded mx-auto d-block" width="50%">
-{% elif 'Norfolk' in county_name%}
+{% elif 'Norfolk' in countyname%}
 <img src = "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Map_of_Massachusetts_highlighting_Norfolk_County.svg/1024px-Map_of_Massachusetts_highlighting_Norfolk_County.svg.png" class="rounded mx-auto d-block" width="50%">
-{% elif 'Middlesex' in county_name%}
+{% elif 'Middlesex' in countyname%}
 <img src = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Map_of_Massachusetts_highlighting_Middlesex_County.svg/1024px-Map_of_Massachusetts_highlighting_Middlesex_County.svg.png" class="rounded mx-auto d-block" width="50%">
-{% elif 'Suffolk' in county_name%}
+{% elif 'Suffolk' in countyname%}
 <img src = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Map_of_Massachusetts_highlighting_Suffolk_County.svg/1024px-Map_of_Massachusetts_highlighting_Suffolk_County.svg.png" class="rounded mx-auto d-block" width="50%">
-{% elif 'Plymouth' in county_name%}
+{% elif 'Plymouth' in countyname%}
 <img src = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Map_of_Massachusetts_highlighting_Plymouth_County.svg/1024px-Map_of_Massachusetts_highlighting_Plymouth_County.svg.png" class="rounded mx-auto d-block" width="50%">
-{% elif 'Bristol' in county_name%}
+{% elif 'Bristol' in countyname%}
 <img src = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Map_of_Massachusetts_highlighting_Bristol_County.svg/1024px-Map_of_Massachusetts_highlighting_Bristol_County.svg.png" class="rounded mx-auto d-block" width="50%">
-{% elif 'Barnstable' in county_name%}
+{% elif 'Barnstable' in countyname%}
 <img src = "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Map_of_Massachusetts_highlighting_Barnstable_County.svg/1024px-Map_of_Massachusetts_highlighting_Barnstable_County.svg.png" class="rounded mx-auto d-block" width="50%">
-{% elif 'Dukes' in county_name%}
+{% elif 'Dukes' in countyname%}
 <img src = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Map_of_Massachusetts_highlighting_Dukes_County.svg/1024px-Map_of_Massachusetts_highlighting_Dukes_County.svg.png" class="rounded mx-auto d-block" width="50%">
-{% elif 'Nantucket' in county_name%}
+{% elif 'Nantucket' in countyname%}
 <img src = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Map_of_Massachusetts_highlighting_Nantucket_County.svg/1024px-Map_of_Massachusetts_highlighting_Nantucket_County.svg.png" class="rounded mx-auto d-block" width="50%">
 {% endif %}
 </div>

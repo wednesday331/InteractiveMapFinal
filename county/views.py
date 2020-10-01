@@ -1,93 +1,150 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+Contains the main Python Django code for
+the Interactive Map of Massachusetts Guide
+project.
+"""
+
+
 import markdown2
 import secrets
+
 from django import forms
 from django.contrib.auth import authenticate, login, logout
-from django.db import IntegrityError
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, InvalidPage
+from django.db import IntegrityError, models
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render
-from . import util
 from markdown2 import Markdown
-from django.urls import reverse
-from django.http import HttpResponseRedirect
-from django import forms
+from . import util
 from .models import User, CountyListEntry
-from django.db import models
 
-
+#Index/Main Page
 def index(request):
+    """Simply displays the map of Massachusetts."""
     return render(request, "county/index.html")
 
-def countyinformation(request, countyname):
+#County Information
+def county_information(request, county_name):
+    """
+    Contains code for when more information
+    about the county is requested.
+    """
     markdowner = Markdown()
-    countieslist = util.list_entries()
-    if countyname in countieslist:
-        countypagedata = util.get_entry(countyname)
-        county= markdowner.convert(countypagedata)
+    counties_list = util.list_entries()
+    if county_name in counties_list:
+        county_page_data = util.get_entry(county_name)
+        county= markdowner.convert(county_page_data)
         user=request.user
         if request.user.is_anonymous is False:
-            userlist=CountyListEntry.objects.filter(user=user)
+            user_list=CountyListEntry.objects.filter(user=user)
             posts=[]
-            for post in userlist:
-                posts.append(post.countyname)
-            if countyname in posts:
-                SavedAlready=True
-                return render(request, "county/countyinformation.html", {"county": county, "countyname": countyname, "SavedAlready":SavedAlready})
-        SavedAlready=False
-        return render(request, "county/countyinformation.html", {"county": county, "countyname": countyname, "SavedAlready":SavedAlready})
+            for post in user_list:
+                posts.append(post.county_name)
+            if county_name in posts:
+                saved_already=True
+                return render(request, "county/countyinformation.html", {"county": county,
+                                                                         "county_name": county_name,
+                                                                         "saved_already":saved_already
+                                                                        }
+                             )
+        saved_already=False
+        return render(request, "county/countyinformation.html",
+                      {"county": county,
+                       "county_name": county_name,
+                       "saved_already":saved_already
+                      }
+                     )
     return render(request, "county/index.html", {"message":"No Such County"})
 
-
-def yourlist(request):
-    countieslist=util.list_entries()
+#Your/My List Code
+def your_list(request):
+    """
+    Contains code for the personalized
+    My List functionality.
+    ('Your List' and 'My List' are interchangeable).
+    """
+    counties_list=util.list_entries()
     user=request.user
     if request.user.is_anonymous is False:
-        userlist=CountyListEntry.objects.filter(user=user)
+        user_list=CountyListEntry.objects.filter(user=user)
         posts=[]
-        for post in userlist:
-            posts.append(post.countyname)
+        for post in user_list:
+            posts.append(post.county_name)
         pagination = Paginator(posts, 5)
-        pageno = request.GET.get('page')
-        posts = pagination.get_page(pageno)
-        return render (request, "county/yourlist.html", {"userlist": userlist, "posts":posts})
+        page_no = request.GET.get('page')
+        posts = pagination.get_page(page_no)
+        return render (request, "county/yourlist.html", {"user_list": user_list, "posts":posts})
     return render(request, "county/login.html", {
         "message": "Please log in to view your list."
     })
-def savecounty(request,countyname):
+
+#Save
+def save_county(request,county_name):
+    """
+    Contains code to save a county to a personal
+    list (My List).
+    """
     markdowner = Markdown()
     if request.user.is_anonymous:
-        return render(request, "county/login.html",{"message": "Please log in before saving any counties."})
+        return render(request, "county/login.html",
+                      {"message": "Please log in before saving any counties."
+                      }
+                     )
     else:
         user=request.user
-        content=util.get_entry(countyname)
-        CountyListentry=CountyListEntry.objects.create(user=user, countyname=countyname, content=content)
-        CountyListentry.save()
-        SavedAlready=bool('Saved')
-        return render(request, "county/countyinformation.html", {"county": markdowner.convert(content), 'countyname': countyname, "message":"County Saved!",  "SavedAlready":SavedAlready})
-    return render(request, "county/countyinformation.html", {"county": markdowner.convert(content), 'countyname': countyname, "SavedAlready":SavedAlready})
+        content=util.get_entry(county_name)
+        county_list_entry=CountyListEntry.objects.create(user=user,
+                                                         county_name=county_name,
+                                                         content=content
+                                                        )
+        county_list_entry.save()
+        saved_already=bool('Saved')
+        return render(request, "county/countyinformation.html", {"county": markdowner.convert(content),
+                                                                 'county_name': county_name,
+                                                                 "message":"County Saved!",
+                                                                 "saved_already":saved_already
+                                                                }
+                     )
+    return render(request, "county/countyinformation.html", {"county": markdowner.convert(content),
+                                                             'county_name': county_name,
+                                                             "saved_already":saved_already
+                                                            }
+                 )
 
-def unsavecounty(request,countyname):
+#Unsave
+def unsave_county(request,county_name):
+    """
+    Contains code to save a county to a personal
+    list (My List).
+    """
     user=request.user
     markdowner = Markdown()
-    countypagedata = util.get_entry(countyname)
-    countynameentry = CountyListEntry.objects.filter(user=user, countyname=countyname)
-    countynameentry.delete()
-    SavedAlready=bool(False)
-    return render(request, "county/countyinformation.html", {"county": markdowner.convert(countypagedata), 'countyname': countyname, "message":"County Unsaved!", "SavedAlready":SavedAlready})
-
+    county_page_data = util.get_entry(county_name)
+    county_name_entry = CountyListEntry.objects.filter(user=user,
+                                                       county_name=county_name
+                                                      )
+    county_name_entry.delete()
+    saved_already=bool(False)
+    return render(request, "county/countyinformation.html", {"county": markdowner.convert(county_page_data),
+                                                             'county_name': county_name,
+                                                             "message":"County Unsaved!",
+                                                             "saved_already":saved_already})
+#Login
 def login_view(request):
+    """Contains code to login a user."""
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
-        usern = User.objects.filter(username=username, password=password)
-        userlen=len(usern)
-        if userlen == 1:
-            userx=User.objects.filter(username=username, password=password)[0]
-            login(request, userx)
+        username_1 = User.objects.filter(username=username, password=password)
+        username_length=len(username_1)
+        if username_length == 1:
+            user_obtained=User.objects.filter(username=username, password=password)[0]
+            login(request, user_obtained)
             return render(request, "county/index.html")
         else:
             return render(request, "county/login.html", {
@@ -99,18 +156,20 @@ def login_view(request):
         else:
             return render(request, "county/index.html")
 
+#Logout        
 def logout_view(request):
+    """Contains code to logout a user."""
     logout(request)
     return HttpResponseRedirect(reverse("index"))
 
-
+# Register
 def register(request):
+    """Contains code to register a user."""
     if request.method == "POST":
         username = request.POST["username"]
         # Ensure password matches confirmation
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
-
         if not username:
             return render(request, "county/register.html", {
                 "message": "Please type in a username."})

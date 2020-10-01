@@ -13,7 +13,7 @@
 <div class="w3-animate-right">
 <ul>
 {% for county in posts %}
-<a href = "{% url 'countyinformation' countyname=county %}"" ><li>{{ county }}</li></a>
+<a href = "{% url 'county_information' county_name=county %}"" ><li>{{ county }}</li></a>
 {% endfor %}
 </ul>
 <div class="w3-animate-right">

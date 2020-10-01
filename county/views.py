@@ -21,7 +21,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from markdown2 import Markdown
 from . import util
-from .models import User, CountyListEntry
+from .models import CountyListEntry, User 
 
 #Index/Main Page
 def index(request):
